@@ -37,16 +37,16 @@ class Train
   def forward
     return if @route.length <= @current_station_index
 
-    @route[@current_station_index].train_send(this)
-    @route[@current_station_index + 1].traint_add(this)
+    @route[@current_station_index].train_send(self)
+    @route[@current_station_index + 1].traint_add(self)
     @current_station_index += 1
   end
 
   def back
     return if @current_station_index.zero?
 
-    @route[@current_station_index].train_send(this)
-    @route[@current_station_index - 1].traint_add(this)
+    @route[@current_station_index].train_send(self)
+    @route[@current_station_index - 1].traint_add(self)
     @current_station_index -= 1
   end
 
