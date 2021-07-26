@@ -2,8 +2,6 @@ class Train
   attr_reader :speed
   attr_reader :wagons
 
-  @current_station_index = 0
-
   def initialize(number, type, wagons)
     @number = number
     @type = type.to_sym
@@ -37,11 +35,19 @@ class Train
   end
 
   def forward
-    @current_station_index += 1 if @route.length < @current_station_index
+    return if @route.length <= @current_station_index
+
+    @route[@current_station_index].train_send(this)
+    @route[@current_station_index + 1].traint_add(this)
+    @current_station_index += 1
   end
 
   def back
-    @current_station_index -= 1 if @current_station_index.positive?
+    return if @current_station_index.zero?
+
+    @route[@current_station_index].train_send(this)
+    @route[@current_station_index - 1].traint_add(this)
+    @current_station_index -= 1
   end
 
   def back_station
