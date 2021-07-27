@@ -1,31 +1,29 @@
 class Train
-  attr_reader :speed
+  attr_accessor :speed
+  attr_reader :number
+  attr_reader :type
   attr_reader :wagons
 
-  def initialize(number, type, wagons)
-    @number = number
-    @type = type.to_sym
-    @wagons = wagons
-  end
-
-  def set_speed(speed)
-    @speed = speed
+  def initialize(number, type)
+    self.number = number
+    self.type = type
   end
 
   def stop
-    @speed = 0
+    self.speed = 0
   end
 
-  def wagon_inc
-    raise 'Поезд движется' if @speed > 0
+  def attach_wagon(wagon)
+    raise 'Поезд движется' if speed.positive
+    raise 'Неверный тип вагона' if wagon.type != type
 
-    @speed += 1
+    @wagons << wagon
   end
 
-  def wagon_deg
-    raise 'Поезд движется' if @speed > 0
+  def detach_wagon(wagon)
+    raise 'Поезд движется' if speed.positive?
 
-    @speed -= 1
+    @wagons.delete wagon
   end
 
   def route=(route)
@@ -35,7 +33,7 @@ class Train
   end
 
   def forward
-    return if @route.length <= @current_station_index
+    return if next_station
 
     @route[@current_station_index].train_send(self)
     @route[@current_station_index + 1].traint_add(self)
@@ -43,7 +41,7 @@ class Train
   end
 
   def back
-    return if @current_station_index.zero?
+    return if back_station
 
     @route[@current_station_index].train_send(self)
     @route[@current_station_index - 1].traint_add(self)
@@ -61,4 +59,10 @@ class Train
   def next_station
     @route[@current_station_index + 1] if @route.length < @current_station_index
   end
+
+  private
+
+  # к данным методам доступ извне не нужен
+  attr_writer :number
+  attr_writer :type
 end
