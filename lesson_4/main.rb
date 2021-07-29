@@ -23,7 +23,7 @@ def create_train
   loop do
     type = types[gets.to_i]
     if type
-      @trainz << type == :passenger ? PassengerTrain.new(number) : CargoTrain.new(number)
+      @trainz.push type == :passenger ? PassengerTrain.new(number) : CargoTrain.new(number)
       @flash = "Поезд номер #{number} успешно добавлен"
       break
     end
@@ -59,6 +59,14 @@ def print_routes
   end
 end
 
+def print_trains
+  pp @trainz
+  puts "\n#{' ' * 6}Список поездов: \n"
+  @trainz.each_with_index do |train, pos|
+    puts "#{' ' * 6}#{pos}. #{train.number}"
+  end
+end
+
 def create_route
   start = []
   stop = []
@@ -91,6 +99,58 @@ def create_route
   @flash = "Маршрут #{print_route @routes.last} успешно создан"
 end
 
+def edit_route
+  if @stations.size <= 2
+    puts 'Число известных станций две или менее. Добавьте еще станций'
+    return
+  end
+
+  print_stations
+  print_routes
+
+  puts "Введите команду в формате  <номер маршрута> <удалить '-'/додавить '+'> <номер станции>, 9 для выхода"
+  loop do
+    print '# '
+    route, action, station = gets.chomp.split(/\s/)
+
+    route = route.to_i
+    station = station.to_i
+
+    return if route == 9 && !action
+
+    error = false
+    error = true unless (0...@routes.size).include? route
+    error = true unless ['+', '-'].include? action
+    error = true unless (0...@stations.size).include? station
+
+    if error
+      puts 'Неверная команда'
+    else
+      route = @routes[route]
+      station = @stations[station]
+
+      case action
+      when '+'
+        if route.stations.include? station
+          puts 'Станция уже есть в машруте'
+        else
+          route.add_station(station)
+          puts 'Станция добавлена'
+        end
+      else
+        route.del_station(station)
+      end
+    end
+  end
+end
+
+def assign_route
+  print_routes
+  print_trains
+
+  sleep 10
+end
+
 def manage_route
   if @stations.size < 2
     @flash = 'Число известных станций меньше двух. Добавте еще станций'
@@ -104,11 +164,17 @@ def manage_route
     print 'Выберите пункт: '
     current_command = gets.to_i
 
-    return if current_command == 9
-
-    if current_command == 1
+    case current_command
+    when 1
       create_route
       break
+    when 2
+      edit_route
+      break
+    when 9
+      return
+    else
+      puts 'неверная комманда'
     end
   end
 end
@@ -134,6 +200,8 @@ loop do
     create_train
   when :manage_route
     manage_route
+  when :assign_route
+    assign_route
   else
     @flash = 'неизвестная комманда'
   end
