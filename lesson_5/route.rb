@@ -1,5 +1,9 @@
+require_relative 'instance_counter'
+
 class Route
   attr_reader :stations
+
+  include InstanceCounter
 
   def initialize(start_point, end_point)
     self.stations = [start_point, end_point]
