@@ -1,7 +1,8 @@
 require_relative 'train'
+require_relative 'instance_counter'
 
 class CargoTrain < Train
-  @@instances = 0
+  include InstanceCounter
 
   def initialize(number)
     super(number, :cargo)
