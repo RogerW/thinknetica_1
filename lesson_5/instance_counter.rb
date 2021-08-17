@@ -2,8 +2,6 @@ module InstanceCounter
   module ClassMethods
     attr_accessor :instance_count
 
-    @instance_count ||= 0
-
     def instances
       puts @instance_count
       @instance_count
