@@ -1,6 +1,7 @@
 require_relative 'instance_counter'
+require_relative 'base_app'
 
-class Station
+class Station < BaseApp
   attr_accessor :name
   attr_reader :trains
 
@@ -10,6 +11,9 @@ class Station
 
   def initialize(name)
     self.name = name
+
+    super
+
     @trains = []
     @@all_stations << self
   end
@@ -28,5 +32,11 @@ class Station
 
   def traint_add(train)
     @trains << train
+  end
+
+  protected 
+
+  def validate!
+    raise(ArgumentError, "Минимальная длина 3 символа") if  name.length < 3
   end
 end

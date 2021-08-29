@@ -2,8 +2,9 @@
 
 require_relative 'vendor'
 require_relative 'instance_counter'
+require_relative 'base_app'
 
-class Train
+class Train < BaseApp
   attr_accessor :speed
   attr_reader :route
   attr_reader :number
@@ -20,6 +21,8 @@ class Train
     self.type = type
     self.wagons = []
     self.speed = 0
+
+    super
 
     @@all_trains << self
 
@@ -88,4 +91,10 @@ class Train
   attr_writer :number
   attr_writer :type
   attr_writer :wagons
+
+  protected 
+
+  def validate!
+    raise(ArgumentError, "Неверный номер поезда. Допустимай формат: XXX(-)XX") if number !~ /\A[a-zA-Z\d]{3}-?[a-zA-Z\d]{2}\z/
+  end
 end

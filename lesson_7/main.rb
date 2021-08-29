@@ -30,14 +30,11 @@ class Menu
     end
   end
 
-  def print_route(route)
-    route.stations.map(&:name).join('->')
-  end
 
   def print_routes
     puts "\n#{' ' * 6}Список маршрутов: \n"
     context.routes.each_with_index do |route, pos|
-      puts "#{' ' * 6}#{pos}. #{print_route(route)}"
+      puts "#{' ' * 6}#{pos}. #{route}"
     end
   end
 
@@ -108,6 +105,9 @@ class CreateTrainMenu < Menu
       end
       puts 'Неверный тип, повторите попытку'
     end
+  rescue ArgumentError => e
+    puts e.message
+    retry
   end
 end
 
@@ -120,6 +120,9 @@ class CreateStationMenu < Menu
 
     context.stations << Station.new(name)
     context.flash = "Станция #{name} успешно создана"
+  rescue ArgumentError => e
+    puts e.message
+    retry
   end
 end
 
@@ -153,7 +156,10 @@ class CreateRouteMenu < Menu
     end
 
     context.routes << Route.new(start, stop)
-    context.flash = "Маршрут #{print_route context.routes.last} успешно создан"
+    context.flash = "Маршрут #{context.routes.last} успешно создан"
+  rescue ArgumentError => e
+    puts e.message
+    retry
   end
 end
 
